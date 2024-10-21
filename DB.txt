@@ -1,0 +1,48 @@
+
+All Table 
+
+1. Table: Store (Model)
+    Fill            Fill Type 
+    - name          string
+    - image         string 
+    - qty           integer
+    - price_buy     integer   100,000 kip  |  dimecel  100,000.00 kip
+    - price_sell    integer
+
+2. Table: User (Model)
+    Fill            Fill Type 
+    - name          string 
+    - email         string 
+    - password      string 
+
+3. Table: Transection (Model)
+    Fill            Fill Type 
+    - tran_id       string 
+    - tran_type     string      ກຳນົດປະເພດ: income / expense
+    - product_id    string 
+    - qty           integer
+    - price         integer
+    - detail        string
+
+4. Table: Bill (Model)
+    Fill            Fill Type 
+    - bill_id       string    // INC00001  | number = 1 
+    - customer_name string 
+    - customer_tel  string
+
+5. Table: Bill_list (Model)
+    Fill            Fill Type 
+    - bill_id       string
+    - name          string 
+    - qty           integer
+    - price         integer
+
+
+Controller  (ສ່ວນທີ່ເອົາໄວ້ຂຽນຄຳນວນ)
+
+    - StoreController           ຈັດການຂໍ້ມູນນສິນຄ້າ
+    - UserControiller           ຈັດການຂໍ້ມູນຜູ້ໃຊ້
+    - TransectionController     ຈັດການຂໍ້ມູນການເຄື່ອນໄຫວ
+    - BillController            ຈັດການຂໍ້ມູນໃບບິນ
+    - ReportController          ຈັດການລາຍງານ
+
