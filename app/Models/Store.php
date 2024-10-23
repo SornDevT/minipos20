@@ -13,6 +13,6 @@ class Store extends Model
         'image',
         'qty',
         'price_buy',
-        'price_sell',
+        'price_sell'
     ];
 }

@@ -3,6 +3,8 @@ Laravel
     - php artisan serve         : ເປັນຄຳສັ່ງ Run Project
     - php artisan key:generate  : ເປັນຄຳສັ່ງສ້າງ Key App
     - composer install          : ຄຳສັ່ງຕິດຕັ້ງ Ribrary ຂອງ Laravel
+    - php artisan migrate       : ຄຳສັ່ງ migrate ສ້າງຕາຕະລາງ ຖານຂໍ້ມູນ
+    - php artisan instll:api    : ຄຳສັ່ງທຳການຕິດຕັ້ງ Laravel API
 
 VueJS
 
