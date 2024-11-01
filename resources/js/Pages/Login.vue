@@ -43,6 +43,9 @@
               
               </div>
             </div>
+            <div class="alert alert-warning" role="alert" v-if="text_error || check_email_text || check_pass_text" >
+              {{ text_error }} {{ check_email_text }} {{ check_pass_text }}
+            </div> 
             <div class="mb-6"> 
               <button class="btn btn-primary d-grid w-100" :disabled="CheckForm" @click="Login()" >ເຂົ້າສູ່ລະບົບ</button>
             </div>
@@ -72,15 +75,49 @@ export default {
         password:'',
         remember_me: false,
         text_error:'',
+        check_email_text:'',
+        check_pass_text:''
       }
     },
     computed:{
       CheckForm(){
-          if(this.email == '' || this.password ==''){
-            return true;
+
+        // ການກວດຊອບ ອີເມວລ໌
+         const EmailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+         if(this.email){
+            if(EmailRegex.test(this.email)){
+              this.check_email_text = ''
+            } else {
+              this.check_email_text = 'ອີເມວລ໌ບໍ່ຖຶກຕ້ອງ'
+            }
+         } else {
+          this.check_email_text = ''
+         }
+
+         // ກວດລະຫັດຜ່ານ ຕ້ອງຫຼາຍກ່ວາ 5 ຕົວອັກສອນ
+         if(this.password){
+          if(this.password.length <=5){ // exp: .length = abcd = 4
+            this.check_pass_text = 'ລະຫັດຜ່ານຕ້ອງຫຼາຍກວ່າ 5 ຕົວອັກສອນ'
           } else {
-            return false;
+            this.check_pass_text = ''
           }
+         } else {
+          this.check_pass_text = ''
+         }
+
+         // ກວດຊອບຄວາມຖຶກຕ້ອງ ແລ້ວສະແດງປຸ່ມ
+         if(!EmailRegex.test(this.email) || this.password.length <=5){
+          return true
+         } else {
+          return false
+         }
+
+          // if(this.email == '' || this.password ==''){
+          //   return true;
+          // } else {
+          //   return false;
+          // }
       }
     },
     methods:{
@@ -92,7 +129,25 @@ export default {
                  login_remember_me: this.remember_me
               }).then((res)=>{
 
-                console.log(res)
+                //console.log(res)
+                if(res.data.success){
+                  this.text_error = ''
+
+                  // clear form data
+                  this.email = ''
+                  this.password = ''
+
+                  // ບັນທຶກຂໍ້ມູນລົງໃນ localstorage
+
+                  localStorage.setItem('web_token', res.data.token)
+                  localStorage.setItem('web_user', JSON.stringify(res.data.user_data))
+
+                  // go to root path
+                  this.$router.push('/')
+
+                } else {
+                  this.text_error = res.data.message
+                }
 
               }).catch((error)=>{
                 console.log(error)

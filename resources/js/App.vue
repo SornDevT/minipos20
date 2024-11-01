@@ -126,8 +126,8 @@
                 <div class="dropdown-divider my-1"></div>
               </li>
               <li>
-                <a class="dropdown-item" href="javascript:void(0);">
-                  <i class="bx bx-power-off bx-md me-3"></i><span>Log Out</span>
+                <a class="dropdown-item" @click="Logout()" href="javascript:void(0);">
+                  <i class="bx bx-power-off bx-md me-3"></i><span>ອອກຈາກລະບົບ</span>
                 </a>
               </li>
             </ul>
@@ -208,10 +208,31 @@
 </template>
 <script>
 import { useStore } from './Store/auth'
+import axios from 'axios';
 export default {
     setup(){
       const store = useStore();
       return { store }
+    },
+    methods:{
+      Logout(){
+        axios.get('api/logout', { headers:{ Authorization: 'Bearer '+this.store.get_token } }).then((res)=>{
+          if(res.data.success){
+            // clear data in localstorage
+            localStorage.removeItem('web_token')
+            localStorage.removeItem('web_user')
+
+            // clear daa in pinia
+            this.store.remove_token() 
+            this.store.remove_user() 
+
+            // go to logn 
+            this.$router.push('/login')
+          }
+        }).catch((error)=>{
+          console.log(error)
+        })
+      }
     }
 }
 </script>
