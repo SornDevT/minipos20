@@ -63,6 +63,7 @@
                 <button type="button" class="btn btn-info" @click="AddStore()" >ເພີ່ມຂໍ້ມູນ</button>
             </div>
         </div>
+        <!-- {{ StoreData }} -->
       <table class="table table-bordered">
         <thead>
           <tr>
@@ -75,20 +76,20 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>aaa</td>
-            <td>aaa</td>
-            <td>aaaa</td>
+          <tr v-for=" item in StoreData.data" :key="item.id" >
+            <td> {{ item.id }} </td>
+            <td>{{ item.image }}</td>
+            <td>{{ item.name }}</td>
             <td>
-             aaaa
+             {{ item.qty }}
             </td>
-            <td>aaaa</td>
+            <td>{{ item.price_buy }}</td>
             <td>
               <div class="dropdown">
                 <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button>
                 <div class="dropdown-menu">
-                  <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-edit-alt me-1"></i> ແກ້ໄຂ</a>
-                  <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-trash me-1"></i> ລຶບ</a>
+                  <a class="dropdown-item" href="javascript:void(0);" @click="EditStore(item.id)" ><i class="bx bx-edit-alt me-1"></i> ແກ້ໄຂ</a>
+                  <a class="dropdown-item" href="javascript:void(0);" @click="DelStore(item.id)" ><i class="bx bx-trash me-1"></i> ລຶບ</a>
                 </div>
               </div>
             </td>
@@ -97,6 +98,8 @@
           
         </tbody>
       </table>
+
+      <Pagination :pagination="StoreData" :offset="4" @paginate="GetStore($event)" />
     </div>
 
 
@@ -105,11 +108,21 @@
 </template>
 <script>
 import axios from 'axios';
+import { useStore } from '../Store/auth'
 
 export default {
+    setup(){
+
+        const store = useStore()
+        return { store }
+
+    },
     data() {
         return {
             ShowForm: false,
+            FormType: true,
+            StoreData:[],
+            EditID:'',
             FormStore: {
                 name:'',
                 image:'',
@@ -131,20 +144,114 @@ export default {
     methods:{
         AddStore(){
             this.ShowForm = true
+            this.FormType = true
         },
         CancelStore(){
             this.ShowForm = false
         },
-        SaveStore(){
+        EditStore(id){
+            this.EditID = id
+            this.FormType = false
 
-            axios.post('api/store/add',this.FormStore).then((res)=>{
+            axios.get(`api/store/edit/${id}`,{ headers:{ Authorization: 'Bearer ' + this.store.get_token } }).then((res)=>{
 
-                console.log(res)
+                this.FormStore = res.data
+                // ສະແດງຟອມ
+                this.ShowForm = true
 
             }).catch((error)=>{
                 console.log(error)
             })
+        },
+        DelStore(id){
+
+            axios.delete(`api/store/delete/${id}`,{ headers:{ Authorization: 'Bearer ' + this.store.get_token } }).then((res)=>{
+                if(res.data.success){
+                    // ອັບເດດລາຍການ
+                    this.GetStore()
+                } else {
+
+                }
+            }).catch((error)=>{
+                console.log(error)
+            })
+        },
+        SaveStore(){
+
+            if(this.FormType){
+                // ເພີ່ມຂໍ້ມູນໃໝ່
+
+                axios.post('api/store/add',this.FormStore,{ headers:{ Authorization: 'Bearer ' + this.store.get_token } }).then((res)=>{
+
+                    // console.log(res)
+
+                        if(res.data.success){
+
+                            this.FormStore.name = ''
+                            this.FormStore.image = ''
+                            this.FormStore.qty = ''
+                            this.FormStore.price_buy = ''
+                            this.FormStore.price_sell = ''
+
+                            // ປິດຟອມ
+                            this.ShowForm = false
+
+                            // ອັບເດດລາຍການ
+                            this.GetStore()
+
+                        } else {
+                            
+                        }
+
+                    }).catch((error)=>{
+                    console.log(error)
+                    })
+
+            } else {
+
+                // ອັບເດດຂໍ້ມູນ
+                axios.post(`api/store/update/${this.EditID}`, this.FormStore,{ headers:{ Authorization: 'Bearer ' + this.store.get_token } }).then((res)=>{
+                  
+                    if(res.data.success){
+
+                        this.FormStore.name = ''
+                            this.FormStore.image = ''
+                            this.FormStore.qty = ''
+                            this.FormStore.price_buy = ''
+                            this.FormStore.price_sell = ''
+
+                            // ປິດຟອມ
+                            this.ShowForm = false
+
+                            // ອັບເດດລາຍການ
+                            this.GetStore()
+
+                    } else {
+
+                    }
+
+                }).catch((error)=>{
+                    console.log(error);
+                })
+
+            }
+
+            
+        },
+        GetStore(page){
+
+            axios.get(`api/store?page=${page}`,{ headers:{ Authorization: 'Bearer ' + this.store.get_token } }).then((res)=>{
+
+                this.StoreData = res.data;
+
+            }).catch((error)=>{
+                console.log(error)
+            })
+
         }
+    },
+    created(){
+        this.GetStore()
     }
 }
 </script>

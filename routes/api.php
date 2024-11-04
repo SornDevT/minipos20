@@ -14,10 +14,23 @@ Route::post('login', [UserController::class,'login']);
 Route::get('logout', [UserController::class,'logout']);
 
 // Group api ທີ່ບໍ່ມີການກວດ token
+// Route::controller(StoreController::class)->group(
+//     function(){
+//         Route::get('store','index');
+//         Route::post('store/add','add');
+//         Route::get('store/edit/{id}','edit');
+//         Route::post('store/update/{id}','update');
+//     }
+// );
 
-Route::controller(StoreController::class)->group(
+// Group api ທີ່ມີການກວດ Token
+Route::group(["middleware"=>["auth:api"]],
     function(){
-        Route::post('store/add','add');
+        Route::get('store',[StoreController::class,'index']);
+        Route::post('store/add',[StoreController::class,'add']);
+        Route::get('store/edit/{id}',[StoreController::class,'edit']);
+        Route::post('store/update/{id}',[StoreController::class,'update']);
+        Route::delete('store/delete/{id}',[StoreController::class,'delete']);
     }
 );
 
