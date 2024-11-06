@@ -14,9 +14,24 @@ class StoreController extends Controller
 
         try {
 
+            // ກຳນົດ path ບັນທຶກຮູບ
+            $upload_path = "assets/img";
+
+            if($request->file('image')){
+
+                // gen ຊື່ຮູບພາບໃໝ່
+                $new_name_img = time().".".$request->image->getClientOriginalExtension();
+
+                // ອັບໂຫຼດ
+                $request->image->move(public_path($upload_path),$new_name_img);
+
+            } else {
+                $new_name_img = '';
+            }
+
             $store = new Store([
                 'name' => $request->name,
-                'image' => '',
+                'image' => $new_name_img,
                 'qty' => $request->qty,
                 'price_buy' => $request->price_buy,
                 'price_sell' => $request->price_sell,
@@ -48,10 +63,20 @@ class StoreController extends Controller
         // $store = Store::orderBy("id","asc")->get();
         // return $store;
 
-        $store = Store::orderBy("id","asc")
-        ->paginate(5)
+        $sort = \Request::get("sort");
+        $perpage = \Request::get("perpage");
+        $search = \Request::get("search");
+
+        $store = Store::orderBy("id",$sort)
+        ->where(
+            function($query) use ($search){
+                $query->where("name","LIKE","%{$search}%")
+                ->orWhere("price_buy","LIKE","%{$search}%");
+            }
+        )
+        ->paginate($perpage)
         ->toArray();
-        
+
         return array_reverse($store);
 
     }
