@@ -76,7 +76,7 @@
         <thead>
           <tr>
             <th class="text-center">ID</th>
-            <th class="text-center">ຮູບພາບ</th>
+            <th class="text-center" width="120">ຮູບພາບ</th>
             <th class="text-center">ຊື່ສິນຄ້າ</th>
             <th class="text-center">ຈຳນວນ</th>
             <th class="text-center">ລາຄາຊື້</th>
@@ -86,7 +86,10 @@
         <tbody>
           <tr v-for=" item in StoreData.data" :key="item.id" >
             <td> {{ item.id }} </td>
-            <td>{{ item.image }}</td>
+            <td>
+                <img :src="url + '/assets/img/'+ item.image" v-if="item.image" class="list-jmg-store" >
+                <img :src="url + '/assets/img/no-img.jpg'" v-else class="list-jmg-store" >
+                </td>
             <td>{{ item.name }}</td>
             <td>
              {{ item.qty }}
@@ -127,6 +130,7 @@ export default {
     },
     data() {
         return {
+            url: window.location.origin,
             ImagePreview: window.location.origin + '/assets/img/upload.jpg',
             ShowForm: false,
             FormType: true,
@@ -218,8 +222,15 @@ export default {
                 // ສະແດງຟອມ
                 this.ShowForm = true
 
+                // ກວດຮູບພາບ
+                if(res.data.image){
+                    this.ImagePreview = this.url + '/assets/img/' + res.data.image
+                } else {
+                    this.ImagePreview =  this.url + '/assets/img/upload.jpg';
+                }
+
             }).catch((error)=>{
-                console.log(error)
+                console.log(error.response.status)
             })
         },
         DelStore(id){
@@ -280,7 +291,6 @@ export default {
 
             if(this.FormType){
                 // ເພີ່ມຂໍ້ມູນໃໝ່
-
                 axios.post('api/store/add',this.FormStore,{ headers:{ "Content-Type":"multipart/form-data", Authorization: 'Bearer ' + this.store.get_token } }).then((res)=>{
 
                     // console.log(res)
@@ -386,13 +396,30 @@ export default {
                 this.StoreData = res.data;
 
             }).catch((error)=>{
+                // console.log(error)
                 console.log(error)
                 if( typeof error.response !=='undefined'){
-                            this.$swal({
-                                title: "ມີຂໍ້ຜິດຜາດ!",
-                                text: error.response.data.message,
-                                icon: "error"
-                            });
+                            if(error.response.status== 401){
+
+                                // ເຄີຍຂໍ້ມູນໃນ localstorage
+                                localStorage.removeItem("web_token")
+                                localStorage.removeItem("web_user")
+
+                                // ເຄຍ token ໃນ pinia
+                                this.store.remove_token()
+                                this.store.remove_user()
+
+                                // go to login
+                                this.$router.push("/login")
+                                
+                            } else {
+                                this.$swal({
+                                        title: "ມີຂໍ້ຜິດຜາດ!",
+                                        text: error.response.data.message,
+                                        icon: "error"
+                                    });
+                            }
+                            
                         }
             })
 
@@ -410,10 +437,16 @@ export default {
     }
 }
 </script>
-<style >
+<style scoped >
     .btimg{
         position: absolute;
         top: 0px;
         right: 10px;
+    }
+    .list-jmg-store{
+        width: 80px;
+        border: 1px solid #d3d3d3;
+        padding: 2px;
+        border-radius: 5px;
     }
 </style>

@@ -13,6 +13,10 @@ import Pagination from './Components/Pagination.vue'
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 
+import { PerfectScrollbarPlugin } from 'vue3-perfect-scrollbar';
+import 'vue3-perfect-scrollbar/style.css';
+
+
 const app = createApp(App);
 app.component('Menu',Menu);
 app.component('Pagination',Pagination);
@@ -20,4 +24,5 @@ app.use(VueSweetalert2);
 app.use(pinia);
 app.use(router);
 app.use(Cleave);
+app.use(PerfectScrollbarPlugin)
 app.mount('#app-vue');
