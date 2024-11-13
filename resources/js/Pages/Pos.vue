@@ -40,9 +40,9 @@
                 <div class="card-body p-0">
                     <div class="p-3">
                         <label>ຊື່ລູກຄ້າ:</label>
-                        <input type="text" class=" form-control mb-1" placeholder="..." >
+                        <input type="text" v-model="customer_name" class=" form-control mb-1" placeholder="..." >
                         <label>ເບີໂທ:</label>
-                        <input type="text" class=" form-control mb-1" placeholder="..." >
+                        <input type="text" v-model="customer_tel" class=" form-control mb-1" placeholder="..." >
                     </div>
                     <div class=" p-2 bg-info text-white">
                         ລາຍການສັ່ງຊື້
@@ -74,12 +74,116 @@
                             <span> {{ formatPrice(TotalAll) }} ກີບ</span>
                         </div>
                         <div class=" p-2">
-                            <button type="button" :disabled="!TotalAll" class="btn rounded-pill btn-success w-100 ">ຊຳລ່ະເງິນ</button>
+                            <button type="button" :disabled="!TotalAll" @click="Pay()" class="btn rounded-pill btn-success w-100 ">ຊຳລ່ະເງິນ</button>
                         </div>
                 </div>
             </div>
         </div>
     </div>
+
+
+    <div class="modal fade" id="dialog_pay" data-bs-backdrop="static" tabindex="-1" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog">
+              <form class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="backDropModalTitle">ການຊຳລະເງິນ</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="row">
+                        <div class="col-md-6">
+                            <div class=" d-flex justify-content-between">
+                                <span>ລວມຍອດເງິນ:</span>
+                                <span>{{ formatPrice(TotalAll) }} ກີບ</span>
+                            </div>
+                            <div class=" d-flex justify-content-between text-danger" v-if="(CashAmount-TotalAll)>0">
+                                <span>ເງິນທອນ:</span>
+                                <span>{{ formatPrice(CashAmount-TotalAll) }} ກີບ</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <label>ຮັບເງິນນຳລູກຄ້າ</label>
+                            <cleave :options="options" v-model="CashAmount" class=" form-control text-end" />
+                            <div class="row mt-2">
+                                <div class="col-md-6">
+                                    <button type="button" class=" btn btn-primary w-100" @click="AddNum(500)" >500</button>
+                                </div>
+                                <div class="col-md-6">
+                                    <button type="button" class=" btn btn-primary w-100"  @click="AddNum(1000)">1,000</button>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-6">
+                                    <button type="button" class=" btn btn-primary w-100"  @click="AddNum(2000)" >2,000</button>
+                                </div>
+                                <div class="col-md-6">
+                                    <button type="button" class=" btn btn-primary w-100"  @click="AddNum(5000)">5,000</button>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-6">
+                                    <button type="button" class=" btn btn-primary w-100"  @click="AddNum(10000)">10,000</button>
+                                </div>
+                                <div class="col-md-6">
+                                    <button type="button" class=" btn btn-primary w-100"  @click="AddNum(20000)" >20,000</button>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-6">
+                                    <button type="button" class=" btn btn-primary w-100"  @click="AddNum(50000)">50,000</button>
+                                </div>
+                                <div class="col-md-6">
+                                    <button type="button" class=" btn btn-primary w-100"  @click="AddNum(100000)" >100,000</button>
+                                </div>
+                            </div>
+                        </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  
+                  <button type="button" class="btn btn-primary me-2" :disabled="CheckBTPay" @click="ConfirmPay()" >ບັນທຶກ</button>
+                  <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">ປິດ</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+
+
+    <div class="modal fade" id="basicModal" tabindex="-1" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel1">Modal title</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="row">
+                    <div class="col mb-6">
+                      <label for="nameBasic" class="form-label">Name</label>
+                      <input type="text" id="nameBasic" class="form-control" placeholder="Enter Name">
+                    </div>
+                  </div>
+                  <div class="row g-6">
+                    <div class="col mb-0">
+                      <label for="emailBasic" class="form-label">Email</label>
+                      <input type="email" id="emailBasic" class="form-control" placeholder="xxxx@xxx.xx">
+                    </div>
+                    <div class="col mb-0">
+                      <label for="dobBasic" class="form-label">DOB</label>
+                      <input type="date" id="dobBasic" class="form-control">
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
 </template>
 <script>
 import axios from 'axios';
@@ -93,15 +197,35 @@ return { store }
 },
     data() {
         return {
+            customer_name:'',
+            customer_tel:'',
             url: window.location.origin,
             StoreData:[],
             ListOrder:[],
             Sort:'desc',
             PerPage: 50,
             Search:'',
+            CashAmount:0,
+            options: {
+                  numeral: true,
+                  numeralPositiveOnly: true,
+                  noImmediatePrefix: true,
+                  rawValueTrimPrefix: true,
+                  numeralIntegerScale: 10,
+                  numeralDecimalScale: 2,
+                  numeralDecimalMark: '.',
+                  delimiter: ','
+                }
         }
     },
     computed:{
+        CheckBTPay(){
+            if(this.CashAmount>=this.TotalAll){
+                return false
+            } else {
+                return true
+            }
+        },
         TotalAll(){
             let val = this.ListOrder.reduce( (num, item) => parseInt(num)+(parseInt(item.qty)*parseInt(item.price)),0);
             return val;
@@ -116,9 +240,88 @@ return { store }
             return 0
            }
         },
+        async openLink(link){
+            const response = await fetch(`${link}`,{ headers:{ Authorization: 'Bearer '+ this.store.get_token}});
+            const html = await response.text();
+            const blob = new Blob([html],{ type: "text/html"});
+            const blobUrl = URL.createObjectURL(blob);
+            window.open(blobUrl, "_blank");
+        },
         formatPrice(value) {
             let val = (value / 1).toFixed(0).replace(",", ".");
             return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        },
+        Pay(){
+            $('#dialog_pay').modal('show');
+        },
+        AddNum(num){
+            this.CashAmount = parseInt(this.CashAmount?this.CashAmount:0) + parseInt(num);
+
+            // if else 
+            // if(this.CashAmount){
+            //     this.CashAmount
+            // } else {
+            //     0
+            // }
+            // short = this.CashAmount==0?this.CashAmount:0
+        },
+        ConfirmPay(){
+
+            axios.post('api/transection/add',{
+                customer_name: this.customer_name,
+                customer_tel: this.customer_tel,
+                listorder: this.ListOrder
+            },{ headers:{ Authorization: 'Bearer ' + this.store.get_token } }).then((res)=>{
+
+                if(res.data.success){
+                    // ເຄີຍຂໍ້ມູນເກົ່າອອກ
+                    this.customer_name = '';
+                    this.customer_tel = '';
+                    this.ListOrder = [];
+                    this.CashAmount = 0;
+                    this.GetStore();
+                    $('#dialog_pay').modal('hide');
+                    if(res.data.bill_id){
+                        // window.open(window.location.origin+'/api/bills/print/'+res.data.bill_id, "_blank");
+                        this.openLink(window.location.origin+'/api/bills/print/'+res.data.bill_id);
+                    }
+
+                } else {
+                    this.$swal({
+                                text: res.data.message,
+                                showConfirmButton:false,
+                                icon: "error",
+                                timer: 2500
+                            });
+
+                }
+
+            }).catch((error)=>{
+                if( typeof error.response !=='undefined'){
+                            if(error.response.status== 401){
+
+                                // ເຄີຍຂໍ້ມູນໃນ localstorage
+                                localStorage.removeItem("web_token")
+                                localStorage.removeItem("web_user")
+
+                                // ເຄຍ token ໃນ pinia
+                                this.store.remove_token()
+                                this.store.remove_user()
+
+                                // go to login
+                                this.$router.push("/login")
+                                
+                            } else {
+                                this.$swal({
+                                        title: "ມີຂໍ້ຜິດຜາດ!",
+                                        text: error.response.data.message,
+                                        icon: "error"
+                                    });
+                            }
+                            
+                        }
+            })
+
         },
         GetStore(page){
 

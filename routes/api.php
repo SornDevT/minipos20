@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\StoreController;
+use App\Http\Controllers\API\TransectionController;
+use App\Http\Controllers\API\BillController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -34,6 +36,19 @@ Route::group(["middleware"=>["auth:api"]],
     }
 );
 
+Route::group(["middleware"=>["auth:api"]],
+    function(){
+        Route::post('transection',[TransectionController::class,'index']);
+        Route::post('transection/add',[TransectionController::class,'add']);
+    }
+);
 
+Route::group(["middleware"=>["auth:api"]],
+    function(){
+        Route::get('bills/print/{id}',[BillController::class,'print_bill']);
+    }
+);
+
+// Route::get('bills/print/{id}', [BillController::class,'print_bill']);
 
 
