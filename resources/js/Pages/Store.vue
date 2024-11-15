@@ -1,11 +1,12 @@
 <template lang="">
+    <DashGrap />
     <div class="card">
   <h5 class="card-header">ລາຍການ ສະຕ໋ອກສິນຄ້າ</h5>
   <div class="card-body">
 
     <div v-if="ShowForm">
-        {{ FormStore }}
-        <hr>
+        <!-- {{ FormStore }} -->
+        <!-- <hr> -->
         <div class="row">
             <div class="col-md-4 text-center" style=" position:relative">
                 <button type="button" v-if="FormStore.image" @click="RemoveImg()" class="btn rounded-pill btn-icon btn-danger btimg">
@@ -109,7 +110,7 @@
           
         </tbody>
       </table>
-      <button @click="showAlert">Hello world</button>
+      <!-- <button @click="showAlert">Hello world</button> -->
       <Pagination :pagination="StoreData" :offset="4" @paginate="GetStore($event)" />
     </div>
 
@@ -272,12 +273,28 @@ export default {
                 }).catch((error)=>{
                     console.log(error)
                     if( typeof error.response !=='undefined'){
-                        this.$swal({
-                            title: "ການລຶບຂໍ້ມູນບໍ່ສຳເລັດ!",
-                            text: error.response.data.message,
-                            icon: "error"
-                        });
-                    }
+                            if(error.response.status== 401){
+
+                                // ເຄີຍຂໍ້ມູນໃນ localstorage
+                                localStorage.removeItem("web_token")
+                                localStorage.removeItem("web_user")
+
+                                // ເຄຍ token ໃນ pinia
+                                this.store.remove_token()
+                                this.store.remove_user()
+
+                                // go to login
+                                this.$router.push("/login")
+                                
+                            } else {
+                                this.$swal({
+                                        title: "ມີຂໍ້ຜິດຜາດ!",
+                                        text: error.response.data.message,
+                                        icon: "error"
+                                    });
+                            }
+                            
+                        }
                 })
                 
                 

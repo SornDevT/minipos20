@@ -82,7 +82,7 @@
           <li class="nav-item navbar-dropdown dropdown-user dropdown">
             <a class="nav-link dropdown-toggle hide-arrow p-0" href="javascript:void(0);" data-bs-toggle="dropdown">
               <div class="avatar avatar-online">
-                <img src="../assets/img/avatars/1.png" alt="" class="w-px-40 h-auto rounded-circle">
+                <img :src="url + '/assets/img/avatars/1.png'" alt="" class="w-px-40 h-auto rounded-circle">
               </div>
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
@@ -91,7 +91,7 @@
                   <div class="d-flex">
                     <div class="flex-shrink-0 me-3">
                       <div class="avatar avatar-online">
-                        <img src="../assets/img/avatars/1.png" alt="" class="w-px-40 h-auto rounded-circle">
+                        <img :src="url + '/assets/img/avatars/1.png'" alt="" class="w-px-40 h-auto rounded-circle">
                       </div>
                     </div>
                     <div class="flex-grow-1">
@@ -213,6 +213,11 @@ export default {
     setup(){
       const store = useStore();
       return { store }
+    },
+    data() {
+      return {
+        url: window.location.origin
+      }
     },
     methods:{
       Logout(){

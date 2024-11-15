@@ -16,10 +16,13 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 import { PerfectScrollbarPlugin } from 'vue3-perfect-scrollbar';
 import 'vue3-perfect-scrollbar/style.css';
 
+import DashGrap from './Components/DashGrap.vue';
+
 
 const app = createApp(App);
 app.component('Menu',Menu);
 app.component('Pagination',Pagination);
+app.component('DashGrap',DashGrap);
 app.use(VueSweetalert2);
 app.use(pinia);
 app.use(router);
